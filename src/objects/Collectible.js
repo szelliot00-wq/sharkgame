@@ -15,7 +15,7 @@ export class CollectibleGroup {
     this.pupTimer = 0;
     this.PUP_INTERVAL = 90000;         // 90 seconds between pups
     this.whaleSharkTimer = 0;
-    this.WHALE_SHARK_INTERVAL = 180000; // 3 minutes between whale sharks
+    this.WHALE_SHARK_INTERVAL = 45000;  // 45 seconds between whale sharks
   }
 
   spawnBetweenObstacles(scrollSpeed) {

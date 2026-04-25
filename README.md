@@ -92,19 +92,22 @@ sharkgame/
 | Fishing net | Stage 1 |
 | Longlining hooks | Stage 1 |
 | Boat propeller | Stage 2 |
+| **Scuba diver** 🤿 | Stage 1 — horizontal swimmer, increases every stage |
 | **Bull shark** 🦈 | Stage 1 — swims straight across |
 | **Tiger shark** 🦈 | Stage 3 — patrols up and down |
 | **Great hammerhead** 🦈 | Stage 4 — drifts in diagonally |
 
 ### Difficulty stages
 
-| Stage | Time | Speed |
-|-------|------|-------|
-| Gentle Waters | 0–60s | 132 px/s |
-| Open Reef | 60–120s | 162 px/s |
-| Feeding Grounds | 120–180s | 200 px/s |
-| Danger Zone | 180–240s | 248 px/s |
-| Bimini Elite | 240s+ | 295+ px/s |
+Speed ramps continuously at +0.9 px/s per second within every stage. Obstacle frequency also tightens progressively. Bimini Elite has no speed cap.
+
+| Stage | Time | Starting speed |
+|-------|------|----------------|
+| Gentle Waters | 0–45s | 150 px/s |
+| Open Reef | 45–90s | 190 px/s |
+| Feeding Grounds | 90–135s | 235 px/s |
+| Danger Zone | 135–180s | 285 px/s |
+| Bimini Elite | 180s+ | 330+ px/s (uncapped) |
 
 ### Collectibles
 
@@ -114,6 +117,7 @@ sharkgame/
 | Snapper | 25 |
 | Jellyfish | 5 |
 | Shark pup 🦈 | 150 + slow-mo moment + fact card |
+| Whale shark 🐋 | 500 + slow-mo + turquoise flash + banner |
 
 ---
 
@@ -127,7 +131,7 @@ Component: `Sharks/src/components/media/BiminiRunTab.jsx`
 
 ## Lemon shark facts
 
-120 facts in `src/data/facts.js` covering lemon sharks, great whites, whale sharks, bull sharks, tiger sharks, hammerheads, makos, basking sharks, nurse sharks, Greenland sharks, thresher sharks, blue sharks, weird & wonderful species, and general shark biology. All scientifically accurate. Facts appear every 500 points and when a shark pup is collected. Fact cards are displayed in a large readable overlay (6px Press Start 2P, 310×85px card, 5.5 second display).
+120 facts in `src/data/facts.js` covering lemon sharks, great whites, whale sharks, bull sharks, tiger sharks, hammerheads, makos, basking sharks, nurse sharks, Greenland sharks, thresher sharks, blue sharks, weird & wonderful species, and general shark biology. All scientifically accurate. Facts appear every 500 points, when a shark pup is collected, and when a whale shark is collected. Fact cards are displayed in a large readable overlay (6px Press Start 2P, 310×85px card, 5.5 second display).
 
 ---
 
