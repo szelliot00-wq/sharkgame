@@ -58,10 +58,11 @@ export default class HUDScene extends Phaser.Scene {
     // Listen to GameScene events
     const game = this.scene.get('GameScene');
     if (game) {
-      game.events.on('score-update', (score) => this._onScoreUpdate(score));
-      game.events.on('life-lost',    (lives) => this._onLifeLost(lives));
-      game.events.on('pup-collected',()       => this._onPupCollected());
-      game.events.on('show-fact',    (idx)    => this._showFactCard(idx));
+      game.events.on('score-update',       (score) => this._onScoreUpdate(score));
+      game.events.on('life-lost',          (lives) => this._onLifeLost(lives));
+      game.events.on('pup-collected',      ()      => this._onPupCollected());
+      game.events.on('whale-shark-collected', ()   => this._onWhaleSharkCollected());
+      game.events.on('show-fact',          (idx)   => this._showFactCard(idx));
     }
   }
 
@@ -87,13 +88,16 @@ export default class HUDScene extends Phaser.Scene {
 
   _onPupCollected() {
     // Flash the score golden
-    this.tweens.add({
-      targets: this._scoreTxt,
-      scaleX: 1.4, scaleY: 1.4,
-      duration: 200, yoyo: true,
-    });
+    this.tweens.add({ targets: this._scoreTxt, scaleX: 1.4, scaleY: 1.4, duration: 200, yoyo: true });
     this._scoreTxt.setColor('#f5c842');
     this.time.delayedCall(600, () => this._scoreTxt.setColor('#52b788'));
+  }
+
+  _onWhaleSharkCollected() {
+    // Flash score cyan + bigger pulse
+    this.tweens.add({ targets: this._scoreTxt, scaleX: 1.7, scaleY: 1.7, duration: 300, yoyo: true });
+    this._scoreTxt.setColor('#90e0ef');
+    this.time.delayedCall(900, () => this._scoreTxt.setColor('#52b788'));
   }
 
   _showFactCard(idx) {

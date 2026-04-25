@@ -18,28 +18,33 @@ export class ObstacleGroup {
   _availableTypes(stage) {
     if (stage < 1) return [
       'net', 'net', 'hooks',
-      'bull-shark', 'bull-shark', 'bull-shark',
+      'bull-shark', 'bull-shark', 'bull-shark', 'bull-shark',
+      'scuba-diver',
     ];
     if (stage < 2) return [
       'net', 'hooks', 'propeller',
       'bull-shark', 'bull-shark', 'bull-shark', 'bull-shark',
+      'scuba-diver', 'scuba-diver',
     ];
     if (stage < 3) return [
       'net', 'hooks', 'propeller',
       'bull-shark', 'bull-shark', 'bull-shark',
       'tiger-shark', 'tiger-shark',
+      'scuba-diver', 'scuba-diver', 'scuba-diver',
     ];
     if (stage < 4) return [
       'net', 'hooks', 'net-hook-combo',
       'bull-shark', 'bull-shark', 'bull-shark',
       'tiger-shark', 'tiger-shark', 'tiger-shark',
       'hammerhead', 'hammerhead',
+      'scuba-diver', 'scuba-diver', 'scuba-diver',
     ];
     return [
       'net', 'hooks', 'moving-net',
       'bull-shark', 'bull-shark', 'bull-shark',
       'tiger-shark', 'tiger-shark', 'tiger-shark',
       'hammerhead', 'hammerhead', 'hammerhead',
+      'scuba-diver', 'scuba-diver', 'scuba-diver', 'scuba-diver',
     ];
   }
 
@@ -115,6 +120,30 @@ export class ObstacleGroup {
       obs.diagonal = true;
       items.push(obs);
       if (this.onSharkSpawn) this.onSharkSpawn('GREAT HAMMERHEAD');
+
+    } else if (type === 'scuba-diver') {
+      // Swims slowly toward the shark — some bob up/down
+      const y = 28 + Math.random() * 195;
+      const obs = this.scene.add.sprite(startX, y, 'scuba-diver', 0);
+      obs.obstacleKind = 'human';
+      obs.moving = Math.random() > 0.4; // 60% bob
+      obs._baseY = y;
+      obs.movePhase = Math.random() * Math.PI * 2;
+      obs.moveAmp = 6 + Math.random() * 8;
+      obs.moveSpeed = 0.6 + Math.random() * 0.5;
+      obs.extraSpeed = 15 + Math.random() * 20; // diver swims toward shark
+      obs.diagonal = false;
+      obs.setScale(1.4);
+      if (!this.scene.anims.exists('diver-kick')) {
+        this.scene.anims.create({
+          key: 'diver-kick',
+          frames: this.scene.anims.generateFrameNumbers('scuba-diver', { start: 0, end: 1 }),
+          frameRate: 3,
+          repeat: -1,
+        });
+      }
+      obs.play('diver-kick');
+      items.push(obs);
     }
 
     items.forEach(item => {
@@ -236,10 +265,11 @@ export class ObstacleGroup {
 
   _hitboxFor(obs) {
     // Sharks get a tighter hitbox (more forgiving for large sprites)
-    const shrink = obs.obstacleKind === 'shark' ? 0.55 : 0.70;
-    const w = obs.width  * shrink;
-    const h = obs.height * shrink;
+    const shrink = obs.obstacleKind === 'shark' ? 0.55 : 0.65;
+    const w = obs.displayWidth  * shrink;
+    const h = obs.displayHeight * shrink;
     return { x: obs.x - w / 2, y: obs.y - h / 2, w, h };
+
   }
 
   _rectsOverlap(a, b) {

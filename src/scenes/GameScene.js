@@ -6,13 +6,13 @@ import { CollectibleGroup } from '../objects/Collectible.js';
 import { Audio } from '../utils/AudioGenerator.js';
 import { SHARK_FACTS } from '../data/facts.js';
 
-// Difficulty stages — slightly tighter than original
+// Difficulty stages — faster progression, continuous speed ramp within each stage
 const STAGES = [
-  { name: 'Gentle Waters',   duration: 60000,   scroll: 132, obstFreq: 2500 },
-  { name: 'Open Reef',       duration: 60000,   scroll: 162, obstFreq: 2000 },
-  { name: 'Feeding Grounds', duration: 60000,   scroll: 200, obstFreq: 1600 },
-  { name: 'Danger Zone',     duration: 60000,   scroll: 248, obstFreq: 1250 },
-  { name: 'Bimini Elite',    duration: Infinity, scroll: 295, obstFreq: 1000 },
+  { name: 'Gentle Waters',   duration: 45000,   scroll: 150, obstFreq: 2200 },
+  { name: 'Open Reef',       duration: 45000,   scroll: 190, obstFreq: 1700 },
+  { name: 'Feeding Grounds', duration: 45000,   scroll: 235, obstFreq: 1300 },
+  { name: 'Danger Zone',     duration: 45000,   scroll: 285, obstFreq: 1000 },
+  { name: 'Bimini Elite',    duration: Infinity, scroll: 330, obstFreq:  750 },
 ];
 
 export default class GameScene extends Phaser.Scene {
@@ -236,18 +236,29 @@ export default class GameScene extends Phaser.Scene {
   }
 
   _updateDifficulty(dt) {
+    // Continuous speed ramp — game always gets faster as you play
+    this._scrollSpeed += 0.9 * (dt / 1000); // +0.9 px/s per second
+
     if (this._stageIdx >= STAGES.length - 1) {
-      // Bimini Elite: keep ramping
-      this._scrollSpeed = Math.min(400, this._scrollSpeed + 0.002 * dt / 1000);
+      // Bimini Elite: no speed cap, obstacle frequency keeps tightening
+      this._obstacleTimer.delay = Math.max(500, this._obstacleTimer.delay - 0.3 * (dt / 1000));
       return;
     }
+
     this._stageTimer += dt;
-    const stageDur = STAGES[this._stageIdx].duration;
-    if (this._stageTimer >= stageDur) {
+    const stage = STAGES[this._stageIdx];
+    if (this._stageTimer >= stage.duration) {
       this._stageTimer = 0;
       this._stageIdx++;
-      this._scrollSpeed = STAGES[this._stageIdx].scroll;
-      this._obstacleTimer.delay = STAGES[this._stageIdx].obstFreq;
+      const next = STAGES[this._stageIdx];
+      // Ensure we hit the next stage's minimum speed
+      this._scrollSpeed = Math.max(this._scrollSpeed, next.scroll);
+      this._obstacleTimer.delay = next.obstFreq;
+    } else {
+      // Within-stage: linearly ramp obstacle frequency toward next stage
+      const progress = this._stageTimer / stage.duration;
+      const nextFreq = STAGES[this._stageIdx + 1].obstFreq;
+      this._obstacleTimer.delay = Phaser.Math.Linear(stage.obstFreq, nextFreq, progress);
     }
   }
 
@@ -274,6 +285,8 @@ export default class GameScene extends Phaser.Scene {
 
     if (type === 'pup') {
       this._onPupCollected();
+    } else if (type === 'whale-shark') {
+      this._onWhaleSharkCollected();
     } else if (type === 'jellyfish') {
       Audio.jellyfish();
     } else {
@@ -285,18 +298,15 @@ export default class GameScene extends Phaser.Scene {
     Audio.pup();
 
     // Slow-mo moment
-    this._paused = true;
     const originalSpeed = this._scrollSpeed;
     this._scrollSpeed = originalSpeed * 0.3;
-    this._paused = false; // actually keep running but slow
 
     // Emit for HUD
     this.events.emit('pup-collected');
 
     // Show pup fact
-    this._showFact(true);
+    this._showFact();
 
-    // Speed up camera shake delight
     this.cameras.main.flash(300, 245, 200, 66, true); // golden flash
 
     this.time.delayedCall(1500, () => {
@@ -304,15 +314,57 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  _showFact(force = false) {
-    // Pick a fact not yet shown
+  _onWhaleSharkCollected() {
+    Audio.pup(); // reuse pup sound (majestic)
+
+    // Longer slow-mo — this is a once-in-3-minutes event
+    const originalSpeed = this._scrollSpeed;
+    this._scrollSpeed = originalSpeed * 0.15;
+
+    this.events.emit('whale-shark-collected');
+    this._showFact();
+
+    // Turquoise ocean flash
+    this.cameras.main.flash(600, 0, 160, 200, true);
+
+    // "WHALE SHARK!" banner
+    const txt = this.add.text(this._W / 2, this._H / 2 - 20, '🐋 WHALE SHARK!', {
+      fontFamily: '"Press Start 2P"',
+      fontSize: '10px',
+      color: '#90e0ef',
+      stroke: '#023e58',
+      strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(80).setAlpha(0);
+
+    const pts = this.add.text(this._W / 2, this._H / 2 - 5, '+500 PTS', {
+      fontFamily: '"Press Start 2P"',
+      fontSize: '7px',
+      color: '#f5c842',
+      stroke: '#3a2500',
+      strokeThickness: 2,
+    }).setOrigin(0.5).setDepth(80).setAlpha(0);
+
+    this.tweens.add({
+      targets: [txt, pts], alpha: 1, duration: 200,
+      hold: 1800, yoyo: true, ease: 'Sine.easeInOut',
+      onComplete: () => { txt.destroy(); pts.destroy(); },
+    });
+
+    this.time.delayedCall(2500, () => {
+      this._scrollSpeed = originalSpeed;
+    });
+  }
+
+  _showFact() {
+    // Pick a fact not yet shown from the full 120-fact pool
+    const total = SHARK_FACTS.length;
     const available = [];
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < total; i++) {
       if (!this._shownFacts.has(i)) available.push(i);
     }
     if (available.length === 0) {
       this._shownFacts.clear();
-      for (let i = 0; i < 40; i++) available.push(i);
+      for (let i = 0; i < total; i++) available.push(i);
     }
     const idx = Phaser.Utils.Array.GetRandom(available);
     this._shownFacts.add(idx);

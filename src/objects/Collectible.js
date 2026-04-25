@@ -1,10 +1,11 @@
-// Collectible.js — Fish, jellyfish, and pup collectibles
+// Collectible.js — Fish, jellyfish, pup, and whale shark collectibles
 
 const FISH_TYPES = [
-  { key: 'fish',     points: 10,  weight: 60 },
-  { key: 'snapper',  points: 25,  weight: 30 },
-  { key: 'jellyfish', points: 5,  weight: 25 },
-  { key: 'pup',      points: 150, weight: 0 }, // spawned manually on timer
+  { key: 'fish',        points: 10,  weight: 60 },
+  { key: 'snapper',     points: 25,  weight: 30 },
+  { key: 'jellyfish',   points: 5,   weight: 25 },
+  { key: 'pup',         points: 150, weight: 0 }, // spawned manually on timer
+  { key: 'whale-shark', points: 500, weight: 0 }, // spawned manually, ultra-rare
 ];
 
 export class CollectibleGroup {
@@ -12,7 +13,9 @@ export class CollectibleGroup {
     this.scene = scene;
     this.collectibles = [];
     this.pupTimer = 0;
-    this.PUP_INTERVAL = 90000; // 90 seconds between pups
+    this.PUP_INTERVAL = 90000;         // 90 seconds between pups
+    this.whaleSharkTimer = 0;
+    this.WHALE_SHARK_INTERVAL = 180000; // 3 minutes between whale sharks
   }
 
   spawnBetweenObstacles(scrollSpeed) {
@@ -35,6 +38,12 @@ export class CollectibleGroup {
     this._spawn(FISH_TYPES[3], x, y, scrollSpeed);
   }
 
+  spawnWhaleShark(scrollSpeed) {
+    const x = 520;
+    const y = 50 + Math.random() * 130;
+    this._spawn(FISH_TYPES[4], x, y, scrollSpeed);
+  }
+
   _spawn(typeObj, x, y, scrollSpeed) {
     const scene = this.scene;
     const obj = scene.add.sprite(x, y, typeObj.key, 0);
@@ -43,10 +52,15 @@ export class CollectibleGroup {
     obj.scrollSpeed = scrollSpeed;
     obj.frameTimer = 0;
 
+    // Whale shark is large — scale it up
+    if (typeObj.key === 'whale-shark') {
+      obj.setScale(1.4);
+    }
+
     // Create anim key if not existing
     const animKey = typeObj.key + '-anim';
     if (!scene.anims.exists(animKey)) {
-      const numFrames = { fish: 2, snapper: 2, jellyfish: 2, pup: 2 }[typeObj.key] || 1;
+      const numFrames = { fish: 2, snapper: 2, jellyfish: 2, pup: 2, 'whale-shark': 2 }[typeObj.key] || 1;
       if (numFrames > 1) {
         scene.anims.create({
           key: animKey,
@@ -77,6 +91,11 @@ export class CollectibleGroup {
       this.pupTimer = 0;
       this.spawnPup(scrollSpeed);
     }
+    this.whaleSharkTimer += delta;
+    if (this.whaleSharkTimer >= this.WHALE_SHARK_INTERVAL) {
+      this.whaleSharkTimer = 0;
+      this.spawnWhaleShark(scrollSpeed);
+    }
   }
 
   update(delta, scrollSpeed) {
@@ -96,10 +115,10 @@ export class CollectibleGroup {
     for (let i = this.collectibles.length - 1; i >= 0; i--) {
       const c = this.collectibles[i];
       const cb = {
-        x: c.x - c.width / 2,
-        y: c.y - c.height / 2,
-        w: c.width,
-        h: c.height,
+        x: c.x - c.displayWidth / 2,
+        y: c.y - c.displayHeight / 2,
+        w: c.displayWidth,
+        h: c.displayHeight,
       };
       if (this._rectsOverlap(sharkHitbox, cb)) {
         collected.push(c);

@@ -1364,6 +1364,197 @@ function drawHammerhead(ctx, frame, w, h) {
   ctx.stroke();
 }
 
+// ─── SCUBA DIVER — 30×14px, 2 frames (horizontal swimmer, faces LEFT) ────────
+// Frame 0: fins together. Frame 1: fins split (flutter kick).
+function drawScubaDiver(ctx, frame, w, h) {
+  const cy = h / 2; // 7
+
+  // Air tank (on their back = top side of horizontal body)
+  const tg = ctx.createLinearGradient(8, 1, 8, 5);
+  tg.addColorStop(0, '#c0c0c0'); tg.addColorStop(1, '#707070');
+  ctx.fillStyle = tg;
+  ctx.beginPath(); ctx.roundRect(9, 1.5, 11, 3.5, 1); ctx.fill();
+  ctx.strokeStyle = '#555'; ctx.lineWidth = 0.5;
+  ctx.strokeRect(9, 1.5, 11, 3.5);
+  // Valve
+  ctx.fillStyle = '#888';
+  ctx.beginPath(); ctx.arc(10.5, 1.5, 1, Math.PI, 0); ctx.fill();
+
+  // Wetsuit body
+  const bg = ctx.createLinearGradient(0, cy - 3, 0, cy + 3);
+  bg.addColorStop(0, '#1a2060'); bg.addColorStop(0.5, '#2a30a0'); bg.addColorStop(1, '#1a2060');
+  ctx.fillStyle = bg;
+  ctx.beginPath(); ctx.roundRect(6, cy - 3.5, 18, 7, 2.5); ctx.fill();
+  // Yellow stripe
+  ctx.fillStyle = '#f5c800';
+  ctx.fillRect(10, cy - 0.5, 10, 1.5);
+  // Shoulder highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.beginPath(); ctx.roundRect(6, cy - 3.5, 18, 3.5, [2.5, 2.5, 0, 0]); ctx.fill();
+
+  // Head + mask
+  ctx.fillStyle = '#c8a078';
+  ctx.beginPath(); ctx.ellipse(4, cy, 3.8, 4, 0, 0, Math.PI * 2); ctx.fill();
+  // Mask glass (tinted blue)
+  ctx.fillStyle = 'rgba(60,160,230,0.45)';
+  ctx.strokeStyle = '#222'; ctx.lineWidth = 0.9;
+  ctx.beginPath(); ctx.roundRect(1.5, cy - 2.5, 5.5, 5, 1.2); ctx.fill(); ctx.stroke();
+  // Regulator mouthpiece
+  ctx.fillStyle = '#444';
+  ctx.beginPath(); ctx.roundRect(-0.5, cy + 1.5, 3, 2, 0.5); ctx.fill();
+
+  // Regulator hose to tank
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 0.7;
+  ctx.beginPath(); ctx.moveTo(2.5, cy + 2); ctx.quadraticCurveTo(7, cy - 4, 10, 2.5); ctx.stroke();
+
+  // Fins (orange-yellow, right side = trailing)
+  ctx.fillStyle = '#ff8800';
+  if (frame === 0) {
+    // Fins together, symmetric
+    ctx.beginPath();
+    ctx.moveTo(23, cy - 1.5);
+    ctx.bezierCurveTo(26, cy - 1.5, 30, cy - 2.5, 30, cy - 0.5);
+    ctx.bezierCurveTo(30, cy + 0.5, 26, cy + 0.5, 23, cy - 0.5); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(23, cy + 1.5);
+    ctx.bezierCurveTo(26, cy + 1.5, 30, cy + 2.5, 30, cy + 0.5);
+    ctx.bezierCurveTo(30, cy - 0.5, 26, cy - 0.5, 23, cy + 0.5); ctx.fill();
+  } else {
+    // Fins split (flutter kick)
+    ctx.beginPath();
+    ctx.moveTo(23, cy - 2.5);
+    ctx.bezierCurveTo(26, cy - 3.5, 30, cy - 5.5, 30, cy - 3.5);
+    ctx.bezierCurveTo(30, cy - 1.5, 26, cy - 1.5, 23, cy - 0.5); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(23, cy + 2.5);
+    ctx.bezierCurveTo(26, cy + 3.5, 30, cy + 5.5, 30, cy + 3.5);
+    ctx.bezierCurveTo(30, cy + 1.5, 26, cy + 1.5, 23, cy + 0.5); ctx.fill();
+  }
+
+  // Air bubbles rising from regulator
+  ctx.strokeStyle = 'rgba(150,220,255,0.7)'; ctx.lineWidth = 0.5;
+  ctx.beginPath(); ctx.arc(2, cy - 5 - frame * 0.5, 1.3, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(4.5, cy - 8 + frame * 0.5, 0.8, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(1.5, cy - 10, 0.6, 0, Math.PI * 2); ctx.stroke();
+}
+
+// ─── WHALE SHARK — 70×32px, 2 frames — smiling gentle giant ─────────────────
+// Head faces RIGHT (same convention as other shark sprites). Will NOT be flipped.
+function drawWhaleShark(ctx, frame, w, h) {
+  const cy = 17; // centreline Y
+  const tSwing = frame === 0 ? 0 : 4;
+
+  // Body — blue-grey with cream belly
+  const bodyGrad = ctx.createLinearGradient(0, 2, 0, h);
+  bodyGrad.addColorStop(0.0, '#1e3a5f');
+  bodyGrad.addColorStop(0.35, '#2e5a8a');
+  bodyGrad.addColorStop(0.65, '#4a7aaa');
+  bodyGrad.addColorStop(1.0, '#e8f5f0');
+  ctx.fillStyle = bodyGrad;
+
+  ctx.beginPath();
+  ctx.moveTo(7, cy + tSwing * 0.3);
+  ctx.bezierCurveTo(22, cy - 8, 42, cy - 13, 58, cy - 12);
+  ctx.bezierCurveTo(64, cy - 11, 68, cy - 8, 69, cy - 4);
+  ctx.bezierCurveTo(70, cy - 1, 70, cy + 2, 69, cy + 6);
+  // Wide flat jaw
+  ctx.bezierCurveTo(68, cy + 11, 63, cy + 14, 57, cy + 14);
+  ctx.bezierCurveTo(40, cy + 14, 22, cy + 11, 8, cy + 7);
+  ctx.bezierCurveTo(7, cy + 5, 7, cy + 3, 7, cy - tSwing * 0.3);
+  ctx.closePath();
+  ctx.fill();
+
+  // Belly highlight
+  const bellyGrad = ctx.createLinearGradient(0, cy + 6, 0, cy + 14);
+  bellyGrad.addColorStop(0, 'rgba(255,255,255,0)');
+  bellyGrad.addColorStop(1, 'rgba(235,255,248,0.8)');
+  ctx.fillStyle = bellyGrad;
+  ctx.beginPath();
+  ctx.moveTo(20, cy + 8);
+  ctx.bezierCurveTo(40, cy + 13, 56, cy + 14, 66, cy + 10);
+  ctx.bezierCurveTo(63, cy + 15, 48, cy + 16, 30, cy + 15);
+  ctx.bezierCurveTo(20, cy + 14, 13, cy + 12, 20, cy + 8);
+  ctx.fill();
+
+  // White spots — characteristic whale shark pattern
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  [
+    {x:54,y:cy-9,r:2.8},{x:45,y:cy-11,r:2.2},{x:36,y:cy-10,r:2.5},
+    {x:27,y:cy-9, r:2}, {x:18,y:cy-7, r:1.8},{x:60,y:cy-4, r:2},
+    {x:50,y:cy-2, r:1.8},{x:41,y:cy-3,r:2.2},{x:32,y:cy-2, r:1.8},
+    {x:22,y:cy-1, r:1.5},{x:13,y:cy-4,r:1.5},{x:62,y:cy-8, r:1.5},
+    {x:56,y:cy+4, r:1.5},{x:47,y:cy+5,r:1.2},{x:38,y:cy+6, r:1.5},
+    {x:29,y:cy+6, r:1.2},
+  ].forEach(s => {
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // Caudal fin
+  const fc = '#1e3a5f';
+  ctx.fillStyle = fc;
+  ctx.beginPath(); // upper lobe
+  ctx.moveTo(8, cy + tSwing * 0.2);
+  ctx.bezierCurveTo(5, cy - 3 + tSwing, 2, cy - 9 + tSwing, 1, cy - 13 + tSwing);
+  ctx.bezierCurveTo(3, cy - 14 + tSwing, 6, cy - 11 + tSwing, 7, cy - 5 + tSwing * 0.5);
+  ctx.bezierCurveTo(8, cy - 2 + tSwing * 0.3, 8, cy, 8, cy + tSwing * 0.2); ctx.fill();
+  ctx.beginPath(); // lower lobe
+  ctx.moveTo(8, cy - tSwing * 0.2);
+  ctx.bezierCurveTo(5, cy + 3 - tSwing * 0.5, 2, cy + 8 - tSwing, 1, cy + 11 - tSwing);
+  ctx.bezierCurveTo(3, cy + 12 - tSwing, 6, cy + 9 - tSwing, 7, cy + 4 - tSwing * 0.3);
+  ctx.bezierCurveTo(8, cy + 2, 8, cy, 8, cy - tSwing * 0.2); ctx.fill();
+
+  // Dorsal fin
+  ctx.fillStyle = fc;
+  ctx.beginPath();
+  ctx.moveTo(29, cy - 10);
+  ctx.bezierCurveTo(30, cy - 17, 36, cy - 22, 40, cy - 22);
+  ctx.bezierCurveTo(44, cy - 22, 47, cy - 16, 49, cy - 11);
+  ctx.bezierCurveTo(43, cy - 10, 36, cy - 10, 29, cy - 10); ctx.fill();
+
+  // Pectoral fin (huge)
+  ctx.fillStyle = fc;
+  ctx.beginPath();
+  ctx.moveTo(50, cy + 2);
+  ctx.bezierCurveTo(52, cy + 8, 56, cy + 18, 53, cy + 22);
+  ctx.bezierCurveTo(48, cy + 22, 43, cy + 14, 42, cy + 8);
+  ctx.bezierCurveTo(44, cy + 4, 48, cy + 2, 50, cy + 2); ctx.fill();
+
+  // Gill slits (5, large)
+  ctx.strokeStyle = 'rgba(10,30,60,0.5)'; ctx.lineWidth = 1;
+  for (let g = 0; g < 5; g++) {
+    const gx = 56 - g * 3.5;
+    ctx.beginPath(); ctx.moveTo(gx, cy - 5); ctx.quadraticCurveTo(gx - 0.5, cy, gx, cy + 6); ctx.stroke();
+  }
+
+  // BIG SMILE — whale shark's most charming feature
+  // A wide upward curve on the broad terminal mouth
+  ctx.strokeStyle = '#0a1a30'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(68.5, cy + 3);
+  ctx.quadraticCurveTo(71, cy + 9, 68, cy + 13);
+  ctx.stroke();
+  // Teeth hint (dotted line inside mouth)
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 0.6;
+  ctx.setLineDash([1, 2]);
+  ctx.beginPath();
+  ctx.moveTo(67.5, cy + 5);
+  ctx.quadraticCurveTo(70, cy + 9.5, 67, cy + 12);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Eye (warm, friendly)
+  ctx.fillStyle = '#0a2040';
+  ctx.beginPath(); ctx.arc(65, cy - 1, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(40,110,70,0.7)';
+  ctx.beginPath(); ctx.arc(65, cy - 0.5, 1.8, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.beginPath(); ctx.arc(66, cy - 2, 1.1, 0, Math.PI * 2); ctx.fill();
+
+  // Happy "cheek" crinkle under eye
+  ctx.strokeStyle = 'rgba(10,30,60,0.35)'; ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.arc(63.5, cy + 5, 4, -0.5, 0.3); ctx.stroke();
+}
+
 // ─── MAIN ENTRY ───────────────────────────────────────────────────────────────
 export function generateAllSprites(scene) {
   makeSheet(scene, 'shark',       56, 28, 4, drawShark);
@@ -1385,4 +1576,6 @@ export function generateAllSprites(scene) {
   makeSheet(scene, 'hammerhead',  60, 30, 2, drawHammerhead);
   makeSheet(scene, 'life-icon',   14, 12, 1, drawLifeIcon);
   makeSheet(scene, 'life-grey',   14, 12, 1, drawLifeIconGrey);
+  makeSheet(scene, 'scuba-diver', 30, 14, 2, drawScubaDiver);
+  makeSheet(scene, 'whale-shark', 70, 32, 2, drawWhaleShark);
 }
