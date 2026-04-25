@@ -68,7 +68,7 @@ sharkgame/
 │   │   ├── SpriteGenerator.js  All sprites drawn with Canvas 2D bezier curves
 │   │   └── AudioGenerator.js   All sounds synthesised with Web Audio API
 │   └── data/
-│       └── facts.js            40 true lemon shark facts
+│       └── facts.js            120 shark facts (all species)
 ├── scripts/
 │   └── com.steveelliott.biminirun.plist  launchd config
 ├── index.html
@@ -127,7 +127,7 @@ Component: `Sharks/src/components/media/BiminiRunTab.jsx`
 
 ## Lemon shark facts
 
-40 facts in `src/data/facts.js` — all scientifically accurate, all mandatory facts from the Bimini Biological Field Station research included. Facts appear every 500 points and when a shark pup is collected.
+120 facts in `src/data/facts.js` covering lemon sharks, great whites, whale sharks, bull sharks, tiger sharks, hammerheads, makos, basking sharks, nurse sharks, Greenland sharks, thresher sharks, blue sharks, weird & wonderful species, and general shark biology. All scientifically accurate. Facts appear every 500 points and when a shark pup is collected. Fact cards are displayed in a large readable overlay (6px Press Start 2P, 310×85px card, 5.5 second display).
 
 ---
 

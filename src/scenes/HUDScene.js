@@ -103,17 +103,20 @@ export default class HUDScene extends Phaser.Scene {
     }
 
     const fact = SHARK_FACTS[idx];
-    const x = -200;
-    const y = this.scale.height - 70;
+    // Card is 310px wide — start fully off-screen left
+    const x = -320;
+    const y = this.scale.height - 88;
 
-    const bg = this.add.rectangle(x + 95, y + 30, 190, 65, 0x05172e, 0.88).setDepth(200);
-    const shark = this.add.text(x + 8, y + 6, '🦈', { fontSize: '10px' }).setDepth(201);
-    const txt = this.add.text(x + 22, y + 4, fact, {
+    const bg = this.add.rectangle(x + 155, y + 40, 310, 85, 0x05172e, 0.92)
+      .setStrokeStyle(1, 0x7ec8e3, 0.6)
+      .setDepth(200);
+    const shark = this.add.text(x + 8, y + 8, '🦈', { fontSize: '14px' }).setDepth(201);
+    const txt = this.add.text(x + 28, y + 6, fact, {
       fontFamily: '"Press Start 2P"',
-      fontSize: '4px',
+      fontSize: '6px',
       color: '#7ec8e3',
-      wordWrap: { width: 165 },
-      lineSpacing: 4,
+      wordWrap: { width: 272 },
+      lineSpacing: 6,
     }).setDepth(201);
 
     this._factCard = [bg, shark, txt];
@@ -121,17 +124,17 @@ export default class HUDScene extends Phaser.Scene {
     // Slide in
     this.tweens.add({
       targets: [bg, shark, txt],
-      x: '+=' + 200,
+      x: '+=' + 320,
       duration: 400,
       ease: 'Back.easeOut',
     });
 
-    // Slide out after 4 seconds
-    this.time.delayedCall(4000, () => {
+    // Slide out after 5.5 seconds (longer for readability)
+    this.time.delayedCall(5500, () => {
       if (!this._factCard) return;
       this.tweens.add({
         targets: this._factCard,
-        x: '-=200',
+        x: '-=320',
         duration: 300,
         ease: 'Back.easeIn',
         onComplete: () => {
