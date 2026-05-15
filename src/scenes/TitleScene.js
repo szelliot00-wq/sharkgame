@@ -91,8 +91,8 @@ export default class TitleScene extends Phaser.Scene {
       color: '#f5c842',
     }).setOrigin(0.5).setDepth(10);
 
-    // Controls tutorial overlay
-    this._showTutorial();
+    // Controls — always visible
+    this._showControls();
 
     // Start music
     Audio.startMusic();
@@ -102,24 +102,16 @@ export default class TitleScene extends Phaser.Scene {
     this.input.keyboard.once('keydown-SPACE', () => this._startGame());
   }
 
-  _showTutorial() {
-    const { width: W, height: H } = this.scale;
+  _showControls() {
+    const { width: W } = this.scale;
     const cx = W / 2;
-    const seen = localStorage.getItem('bimini_tutorial_seen');
-    if (seen) return;
+    const style = { fontFamily: '"Press Start 2P"', fontSize: '5px', color: '#7ec8e3' };
 
-    const overlay = this.add.rectangle(cx, H / 2 + 20, 220, 80, 0x000000, 0.7).setDepth(20);
-    const t1 = this.add.text(cx, H / 2 - 10, '👆 Hold TOP → swim up', { fontFamily: '"Press Start 2P"', fontSize: '5px', color: '#7ec8e3' }).setOrigin(0.5).setDepth(21);
-    const t2 = this.add.text(cx, H / 2 + 5, '👇 Hold BOTTOM → swim down', { fontFamily: '"Press Start 2P"', fontSize: '5px', color: '#7ec8e3' }).setOrigin(0.5).setDepth(21);
-    const t3 = this.add.text(cx, H / 2 + 20, 'Release → drift to centre', { fontFamily: '"Press Start 2P"', fontSize: '5px', color: '#52b788' }).setOrigin(0.5).setDepth(21);
-    const t4 = this.add.text(cx, H / 2 + 38, 'Tap anywhere to dismiss', { fontFamily: '"Press Start 2P"', fontSize: '4px', color: '#f8f9fa', alpha: 0.6 }).setOrigin(0.5).setDepth(21);
-
-    this._tutOverlay = [overlay, t1, t2, t3, t4];
-
-    this.time.delayedCall(3000, () => {
-      this._tutOverlay.forEach(o => o.destroy());
-      localStorage.setItem('bimini_tutorial_seen', '1');
-    });
+    this.add.rectangle(cx, 175, 220, 48, 0x000000, 0.5).setDepth(10);
+    this.add.text(cx, 158, '— HOW TO PLAY —', { ...style, fontSize: '4px', color: '#f5c842' }).setOrigin(0.5).setDepth(11);
+    this.add.text(cx, 170, '⬆ W / tap top    swim up',   style).setOrigin(0.5).setDepth(11);
+    this.add.text(cx, 182, '⬇ S / tap bottom  swim down', style).setOrigin(0.5).setDepth(11);
+    this.add.text(cx, 194, 'SPACE             pause',     { ...style, color: '#52b788' }).setOrigin(0.5).setDepth(11);
   }
 
   update() {
