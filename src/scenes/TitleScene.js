@@ -107,11 +107,11 @@ export default class TitleScene extends Phaser.Scene {
     const cx = W / 2;
     const style = { fontFamily: '"Press Start 2P"', fontSize: '5px', color: '#7ec8e3' };
 
-    this.add.rectangle(cx, 175, 220, 48, 0x000000, 0.5).setDepth(10);
-    this.add.text(cx, 158, '— HOW TO PLAY —', { ...style, fontSize: '4px', color: '#f5c842' }).setOrigin(0.5).setDepth(11);
-    this.add.text(cx, 170, '⬆ W / tap top    swim up',   style).setOrigin(0.5).setDepth(11);
-    this.add.text(cx, 182, '⬇ S / tap bottom  swim down', style).setOrigin(0.5).setDepth(11);
-    this.add.text(cx, 194, 'SPACE             pause',     { ...style, color: '#52b788' }).setOrigin(0.5).setDepth(11);
+    this.add.rectangle(cx, 112, 230, 52, 0x000000, 0.6).setDepth(10);
+    this.add.text(cx,  94, '— HOW TO PLAY —',          { ...style, fontSize: '4px', color: '#f5c842' }).setOrigin(0.5).setDepth(11);
+    this.add.text(cx, 106, '⬆ W / tap top = swim up',   style).setOrigin(0.5).setDepth(11);
+    this.add.text(cx, 118, '⬇ S / tap bottom = swim down', style).setOrigin(0.5).setDepth(11);
+    this.add.text(cx, 130, 'SPACE = pause',              { ...style, color: '#52b788' }).setOrigin(0.5).setDepth(11);
   }
 
   update() {
